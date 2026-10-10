@@ -1,0 +1,243 @@
+{
+  "name": "AI SOC Alert Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "SOC-ALERT",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -448,
+        -32
+      ],
+      "id": "9c83d57f-35e9-4747-a63c-0d2ceecf6f21",
+      "name": "Webhook",
+      "webhookId": "2f779829-c52e-4ac0-892d-0a5ee1a03de4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3c8e038a-a622-44a9-86c9-60789b952859",
+              "name": "alert_name",
+              "value": "={{ $json.body?.search_name || $json.body?.alert_name || $json.body?.alert?.name || 'Splunk Security Alert' }}",
+              "type": "string"
+            },
+            {
+              "id": "b70db908-0614-4da3-9449-21d3ef85364a",
+              "name": "severity",
+              "value": "={{ $json.body?.result?.src_ip || $json.body?.result?.source_ip || $json.body?.src_ip || $json.body?.source_ip || 'Not provided' }}",
+              "type": "string"
+            },
+            {
+              "id": "0afd75eb-9e86-45af-8955-d4b7831648a8",
+              "name": "source_ip",
+              "value": "={{ $json.body?.result?.src_ip || $json.body?.result?.source_ip || $json.body?.src_ip || $json.body?.source_ip || 'Not provided' }}",
+              "type": "string"
+            },
+            {
+              "id": "e66d0413-dfb4-4396-a276-0abfbf814834",
+              "name": "destination_ip",
+              "value": "={{ $json.body?.result?.dest_ip || $json.body?.result?.destination_ip || $json.body?.dest_ip || $json.body?.destination_ip || 'Not provided' }}",
+              "type": "string"
+            },
+            {
+              "id": "765c0b46-4456-4eac-bbe6-13b8563a1437",
+              "name": "message",
+              "value": "={{ JSON.stringify($json.body?.result || $json.body || $json) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -256,
+        -32
+      ],
+      "id": "bd6da190-26f2-4ad5-92db-0b7a17ccbb3b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an AI SOC analyst. Analyze the following Splunk security alert.\n\nAlert name: {{ $json.alert_name }}\nSeverity: {{ $json.severity }}\nSource IP: {{ $json.source_ip }}\nDestination IP: {{ $json.destination_ip }}\nEvent details: {{ $json.message }}\n\nIdentify the likely detection type, explain the evidence,\nassess the risk, and recommend investigation steps.\n\nDo not invent missing information. Clearly state when\nevidence is insufficient. Do not automatically block IPs\nor execute response actions.\n\nWrite a professional plain-text email report.\nDo not use Markdown symbols such as ## or **.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -64,
+        -32
+      ],
+      "id": "911273e9-db8e-4109-bc86-23a549fec1b3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-6.1-sol",
+          "mode": "list",
+          "cachedResultName": "gpt-6.1-sol"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -64,
+        176
+      ],
+      "id": "39fd066d-4179-4196-8dcd-ea6b27bbcb38",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "mohitrana2647@gmail.com",
+        "toEmail": "mohitrana2647@gmail.com",
+        "subject": "AI SOC Alert Analysis Report",
+        "html": "={{ '<h2>AI SOC Alert Analysis Report</h2><pre style=\"white-space:pre-wrap;font-family:Arial,sans-serif;\">' + ($json.output || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/^#{1,6}\\s*/gm,'').replace(/\\*\\*/g,'').replace(/`/g,'') + '</pre>' }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        304,
+        -32
+      ],
+      "id": "383397a0-9ace-4f73-a90a-e3347601369c",
+      "name": "Send an Email",
+      "webhookId": "0de25602-b15b-4e03-b95d-ced6a371c8fe",
+      "credentials": {
+        "smtp": {
+          "id": "Jbo0BWjG1yxQPg4G",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "mohitrana2647.app.n8n.cloud",
+            "user-agent": "Splunk/380596D6-140B-4C98-B4CF-02A0A9C82A82",
+            "content-length": "410",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "106.221.110.132",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "IN",
+            "cf-ray": "a47bddbc6cbfa761-DEL",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "106.221.110.132, 162.158.44.246",
+            "x-forwarded-host": "mohitrana2647.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-69-774f776884-5vj78",
+            "x-is-trusted": "yes",
+            "x-real-ip": "106.221.110.132"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "sid": "rt_scheduler__splunk__search__RMD52e0104091ed45a6a_at_1791532560_45.21",
+            "search_name": "Nmap port Scan Detection",
+            "app": "search",
+            "owner": "splunk",
+            "results_link": "http://DESKTOP-RS7A1P0:8000/app/search/@go?sid=rt_scheduler__splunk__search__RMD52e0104091ed45a6a_at_1791532560_45.21",
+            "result": {
+              "src_ip": "192.168.20.11",
+              "dest_ip": "192.168.20.10",
+              "unique_ports": "953",
+              "connections": "1660"
+            }
+          },
+          "webhookUrl": "https://mohitrana2647.app.n8n.cloud/webhook/SOC-ALERT",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "abafa50f-385c-4286-b113-bad5faaa34cc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2edacf1f38ae82610a557693bd5d40f2ef60e7bc3a7ebb48f2cee449489570b1"
+  },
+  "nodeGroups": [],
+  "id": "nS6LibXxt0qRcMO6",
+  "tags": []
+}
