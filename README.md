@@ -43,12 +43,66 @@ The project also integrates Splunk alerts with an n8n AI workflow that analyzes 
 
 ## Detection Scenarios
 
-### 1. Nmap Port Scan Detection
-Identifies potential network reconnaissance by analyzing connection activity and the number of destination ports contacted by a source IP.
+This project implements network threat detection using Splunk SIEM, Suricata, and log analysis.
 
-### 2. SSH Brute-Force Detection
-Analyzes Ubuntu authentication logs to identify repeated failed SSH login attempts.
+### 1. SSH Brute-Force Detection
+- Detects repeated failed SSH login attempts.
+- Analyzes Ubuntu authentication logs using Splunk Search Processing Language (SPL).
+- Helps identify potential unauthorized access attempts.
 
+### 2. SMB Traffic Detection
+- Monitors SMB (Server Message Block) network traffic.
+- Helps investigate potentially suspicious file-sharing activity.
+- Supports network security monitoring and threat investigation.
 
-### 3. DNS Anomaly Detection
-Uses available DNS telemetry to investigate unusual DNS activity that may indicate suspicious
+### 3. HTTP Beaconing Detection
+- Identifies repeated HTTP connections that may occur at regular intervals.
+- Helps investigate potential command-and-control (C2) communication.
+- Uses network traffic data and Splunk searches to identify suspicious patterns.
+
+### 4. Nmap Port Scan Detection
+- Detects potential network reconnaissance by identifying connections to multiple destination ports.
+- Analyzes source IP addresses, destination IP addresses, and port activity.
+- Helps identify hosts that may be scanning systems for exposed services.
+
+## AI-Powered SOC Alert Analysis
+
+Integrated n8n Cloud with Splunk alerts to automate initial security alert analysis using an AI Agent.
+
+**Workflow:**
+
+`Splunk Alert → Webhook → Edit Fields → AI Agent → Email Report`
+
+### Automated Analysis Features
+- Receives Splunk alert data through a webhook.
+- Extracts alert details, severity, and available IP addresses.
+- Uses an AI Agent to analyze the alert and summarize the evidence.
+- Generates a report with a risk assessment and recommended investigation steps.
+- Sends the analysis to email for review by a security analyst.
+
+## Tools and Technologies
+
+- **Splunk SIEM** — log analysis, SPL queries, saved searches, and alerts.
+- **Suricata IDS** — network traffic monitoring and event generation.
+- **Ubuntu Linux** — log collection and Universal Forwarder.
+- **Kali Linux** — controlled security testing in the lab.
+- **Windows** — Splunk receiving server and security lab environment.
+- **n8n Cloud** — workflow automation.
+- **AI Agent** — initial alert analysis and report generation.
+
+## Skills Demonstrated
+
+- SIEM configuration and alert management
+- SPL query development
+- Network traffic analysis
+- SSH authentication monitoring
+- SMB traffic monitoring
+- HTTP beaconing analysis
+- Network reconnaissance detection
+- Security alert automation
+- AI-assisted SOC investigation
+- Email-based alert reporting
+
+## Security Note
+
+This project was developed for educational purposes in a controlled virtual lab. AI-generated reports support initial triage and should be reviewed by a human analyst. No automated IP blocking or other destructive response actions are performed.
