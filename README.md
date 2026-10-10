@@ -49,5 +49,6 @@ Identifies potential network reconnaissance by analyzing connection activity and
 ### 2. SSH Brute-Force Detection
 Analyzes Ubuntu authentication logs to identify repeated failed SSH login attempts.
 
+
 ### 3. DNS Anomaly Detection
 Uses available DNS telemetry to investigate unusual DNS activity that may indicate suspicious
